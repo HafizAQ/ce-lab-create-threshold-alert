@@ -1,8 +1,8 @@
 # Lab M6.02 - Create Basic Threshold Alert
 
-**Repository:** [https://github.com/cloud-engineering-bootcamp/ce-lab-create-threshold-alert](https://github.com/cloud-engineering-bootcamp/ce-lab-create-threshold-alert)
+**Repository:** [github.com/HafizAQ/ce-lab-create-threshold-alert](https://github.com/HafizAQ/ce-lab-create-threshold-alert)
 
-**Activity Type:** Individual  
+**Activity Type:** Individual
 **Estimated Time:** 30-45 minutes
 
 ## Learning Objectives
@@ -18,6 +18,7 @@
 Set up trigger-based alerts using CloudWatch Alarms that notify you via email when resources exceed thresholds.
 
 **Success Criteria:**
+
 - CloudWatch alarm created
 - SNS topic configured with email subscription
 - Alert triggers when threshold exceeded
@@ -60,22 +61,26 @@ Create a **public** GitHub repository named `ce-lab-threshold-alerts` containing
 ### Required Files
 
 **1. README.md**
+
 - Overview of alerting strategy
 - Threshold justifications
 - Testing methodology
 - Screenshots of alerts
 
 **2. Alert Configurations** (`config/`)
+
 - `sns-topic-config.txt` - SNS topic details
 - `alarm-configs.txt` - All alarm configurations
 - `thresholds.md` - Threshold decisions and rationale
 
 **3. Testing Documentation** (`tests/`)
+
 - `test-plan.md` - How you tested each alarm
 - `test-results.md` - Results of testing
 - Screenshots of triggered alarms
 
 **4. Screenshots** (`screenshots/`)
+
 - SNS topic created
 - Email subscription confirmed
 - Alarm in OK state
@@ -83,6 +88,7 @@ Create a **public** GitHub repository named `ce-lab-threshold-alerts` containing
 - Email notification received
 
 ### Repository Structure
+
 ```
 ce-lab-threshold-alerts/
 ├── README.md
@@ -113,6 +119,7 @@ ce-lab-threshold-alerts/
 ### Part 1: Create SNS Topic and Subscribe (10 min)
 
 **Create SNS Topic:**
+
 ```bash
 # Create topic
 TOPIC_ARN=$(aws sns create-topic \
@@ -128,6 +135,7 @@ echo $TOPIC_ARN > sns-topic-arn.txt
 ```
 
 **Subscribe Email:**
+
 ```bash
 # Subscribe your email
 aws sns subscribe \
@@ -139,6 +147,7 @@ aws sns subscribe \
 ```
 
 **Verify Subscription:**
+
 ```bash
 # List subscriptions
 aws sns list-subscriptions-by-topic --topic-arn $TOPIC_ARN
@@ -147,6 +156,7 @@ aws sns list-subscriptions-by-topic --topic-arn $TOPIC_ARN
 ```
 
 **Test SNS Topic:**
+
 ```bash
 # Send test message
 aws sns publish \
@@ -160,6 +170,7 @@ aws sns publish \
 ### Part 2: Create EC2 CPU Alarm (10 min)
 
 **High CPU Alarm:**
+
 ```bash
 # Get your EC2 instance ID
 INSTANCE_ID=$(aws ec2 describe-instances \
@@ -185,12 +196,14 @@ aws cloudwatch put-metric-alarm \
 ```
 
 **Explanation:**
+
 - **Period: 300 seconds** (5 minutes)
 - **Evaluation periods: 2** (10 minutes total)
 - **Threshold: 80%**
 - **Comparison: GreaterThan**
 
 **Verify Alarm:**
+
 ```bash
 # Describe alarm
 aws cloudwatch describe-alarms --alarm-names HighCPUUtilization
@@ -204,6 +217,7 @@ aws cloudwatch describe-alarms \
 ### Part 3: Create Additional Alarms (10 min)
 
 **Memory Alarm (Custom Metric):**
+
 ```bash
 aws cloudwatch put-metric-alarm \
   --alarm-name HighMemoryUtilization \
@@ -220,6 +234,7 @@ aws cloudwatch put-metric-alarm \
 ```
 
 **Disk Space Alarm:**
+
 ```bash
 aws cloudwatch put-metric-alarm \
   --alarm-name LowDiskSpace \
@@ -236,6 +251,7 @@ aws cloudwatch put-metric-alarm \
 ```
 
 **Application Error Rate Alarm (from Logs):**
+
 ```bash
 # First, create metric filter from logs
 aws logs put-metric-filter \
@@ -260,6 +276,7 @@ aws cloudwatch put-metric-alarm \
 ```
 
 **ALB Target Response Time Alarm:**
+
 ```bash
 aws cloudwatch put-metric-alarm \
   --alarm-name HighResponseTime \
@@ -281,6 +298,7 @@ aws cloudwatch put-metric-alarm \
 **Test CPU Alarm:**
 
 **Method 1: Stress Test (Linux):**
+
 ```bash
 # Install stress
 sudo apt-get install stress -y
@@ -293,6 +311,7 @@ watch -n 10 "aws cloudwatch describe-alarms --alarm-names HighCPUUtilization --q
 ```
 
 **Method 2: Python Script:**
+
 ```python
 # cpu_load.py
 import multiprocessing
@@ -311,16 +330,17 @@ if __name__ == '__main__':
         p = multiprocessing.Process(target=busy_loop)
         p.start()
         processes.append(p)
-    
+  
     # Run for 15 minutes
     time.sleep(900)
-    
+  
     # Stop processes
     for p in processes:
         p.terminate()
 ```
 
 **Test Error Rate Alarm:**
+
 ```bash
 # Generate errors in your application
 for i in {1..20}; do
@@ -334,11 +354,13 @@ aws cloudwatch describe-alarms --alarm-names HighErrorRate
 ### Part 5: Understand Alarm States (5 min)
 
 **Alarm States:**
+
 - **OK:** Metric is within threshold
 - **ALARM:** Metric has breached threshold
 - **INSUFFICIENT_DATA:** Not enough data to evaluate
 
 **Check Alarm History:**
+
 ```bash
 # Get alarm history
 aws cloudwatch describe-alarm-history \
@@ -353,6 +375,7 @@ aws cloudwatch describe-alarms \
 ```
 
 **View Alarm in Console:**
+
 1. Go to CloudWatch → Alarms
 2. Click on alarm name
 3. View graph with threshold line
@@ -397,23 +420,25 @@ aws cloudwatch put-metric-alarm \
 Answer these in your README:
 
 1. **Why use 2 evaluation periods instead of 1?**
+
    - Hint: Avoid false alarms from temporary spikes
-
 2. **What's the difference between Average, Maximum, and P95?**
+
    - Hint: Average can hide outliers, Maximum is too sensitive
-
 3. **When should you use OK actions vs just alarm actions?**
+
    - Hint: Notify when problem resolves
-
 4. **How do you determine appropriate thresholds?**
-   - Hint: Baseline normal behavior first
 
+   - Hint: Baseline normal behavior first
 5. **What's the cost of CloudWatch alarms?**
+
    - Hint: $0.10 per standard alarm per month
 
 ## Bonus Challenges
 
 **+5 points each:**
+
 - [ ] Create composite alarm (combines multiple alarms)
 - [ ] Set up different SNS topics for different severity levels
 - [ ] Create alarm that triggers Lambda function
@@ -423,18 +448,21 @@ Answer these in your README:
 ## Troubleshooting
 
 **Issue: Not receiving emails**
+
 - Check spam folder
 - Verify subscription is confirmed
 - Test SNS topic directly
 - Check email address is correct
 
 **Issue: Alarm not triggering**
+
 - Verify metric has data (check graph)
 - Check evaluation periods and period
 - Ensure threshold is correct
 - Review "treat missing data" setting
 
 **Issue: Too many false alarms**
+
 - Increase evaluation periods
 - Adjust threshold
 - Use different statistic (P95 instead of Max)

@@ -1,0 +1,68 @@
+# Describe alarm
+aws cloudwatch describe-alarms --alarm-names HighCPUUtilization
+ 
+# Check alarm state
+aws cloudwatch describe-alarms \
+  --alarm-names HighCPUUtilization \
+  --query 'MetricAlarms[0].StateValue'
+{
+    "MetricAlarms": [
+        {
+            "AlarmName": "HighCPUUtilization",
+            "AlarmArn": "arn:aws:cloudwatch:us-east-1:203637464233:alarm:HighCPUUtilization",
+            "AlarmDescription": "Alert when CPU exceeds 80% for 10 minutes",
+            "AlarmConfigurationUpdatedTimestamp": "2026-08-11T13:24:23.414000+02:00",
+            "ActionsEnabled": true,
+            "OKActions": [
+                "arn:aws:sns:us-east-1:203637464233:CloudWatchAlerts"
+            ],
+            "AlarmActions": [
+                "arn:aws:sns:us-east-1:203637464233:CloudWatchAlerts"
+            ],
+            "InsufficientDataActions": [],
+            "StateValue": "OK",
+            "StateReason": "Threshold Crossed: 2 datapoints [0.488317841596431 (11/08/26 11:19:00), 0.3940397982361431 (11/08/26 11:14:00)] were
+ not greater than the threshold (80.0).",
+            "StateReasonData": "{\"version\":\"1.0\",\"queryDate\":\"2026-08-11T11:24:57.531+0000\",\"startDate\":\"2026-08-11T11:14:00.000+0000
+\",\"statistic\":\"Average\",\"period\":300,\"recentDatapoints\":[0.3940397982361431,0.488317841596431],\"threshold\":80.0,\"evaluatedDatapoints
+\":[{\"timestamp\":\"2026-08-11T11:19:00.000+0000\",\"sampleCount\":5.0,\"value\":0.488317841596431}]}",
+            "StateUpdatedTimestamp": "2026-08-11T13:24:57.533000+02:00",
+            "MetricName": "CPUUtilization",
+            "Namespace": "AWS/EC2",
+            "Statistic": "Average",
+            "Dimensions": [
+                {
+                    "Name": "InstanceId",
+                    "Value": "i-03ca2f390a865bc9d"
+                }
+            ],
+            "Period": 300,
+            "EvaluationPeriods": 2,
+            "Threshold": 80.0,
+            "ComparisonOperator": "GreaterThanThreshold",
+            "TreatMissingData": "notBreaching",
+            "StateTransitionedTimestamp": "2026-08-11T13:24:57.533000+02:00"
+        }
+    ],
+    "CompositeAlarms": []
+}
+(END)
+            "Statistic": "Average",
+            "Dimensions": [
+                {
+                    "Name": "InstanceId",
+                    "Value": "i-03ca2f390a865bc9d"
+                }
+            ],
+            "Period": 300,
+            "EvaluationPeriods": 2,
+            "Threshold": 80.0,
+            "ComparisonOperator": "GreaterThanThreshold",
+            "TreatMissingData": "notBreaching",
+            "StateTransitionedTimestamp": "2026-08-11T13:24:57.533000+02:00"
+        }
+    ],
+    "CompositeAlarms": []
+}
+(END)
+"OK"
